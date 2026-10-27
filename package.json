@@ -1,0 +1,13 @@
+{
+  "name": "student-result-management-system",
+  "version": "1.0.0",
+  "description": "Next-Gen Student Result Management System with Trendy Glassmorphism & Cyber UI for Advanced Internet Programming",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["student-result", "aip", "academic", "rest-api", "sqlite", "sse", "glassmorphism"],
+  "author": "AIP Student",
+  "license": "MIT"
+}

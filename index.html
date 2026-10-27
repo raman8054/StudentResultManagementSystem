@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chandigarh University | Student Result Management System</title>
+  
+  <!-- Clean Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/print.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+</head>
+<body>
+
+  <div class="app-wrapper">
+    <!-- Clean White Glassmorphism Header -->
+    <header class="navbar">
+      <div class="nav-brand" onclick="App.switchTab('student-portal')">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L1 7l11 5 9-4.09V17h2V7L12 2zm0 8.35L4.47 7 12 3.58 19.53 7 12 10.35zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+          </svg>
+        </div>
+        <div>
+          <span class="brand-title">Chandigarh University</span>
+          <span class="brand-badge">RESULT PORTAL</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs">
+        <button class="nav-tab-btn active" data-tab="student-portal">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Student Portal
+        </button>
+        <button class="nav-tab-btn" data-tab="podium">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+          Top Rankers
+        </button>
+        <button class="nav-tab-btn" data-tab="admin">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Faculty Portal
+        </button>
+        <button class="nav-tab-btn" data-tab="verify-portal">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Verify QR
+        </button>
+      </nav>
+
+      <!-- Nav Actions -->
+      <div class="nav-actions">
+        <div class="live-badge" id="live-sse-status" title="Real-Time Server Synchronization Active">
+          <div class="live-dot"></div>
+          <span>LIVE SYNC</span>
+        </div>
+
+        <button class="cmd-pill" onclick="App.openCommandPalette()" title="Press Ctrl+K to search">
+          <span>Search</span>
+          <kbd class="kbd-shortcut">Ctrl K</kbd>
+        </button>
+      </div>
+    </header>
+
+    <!-- ==================================================== -->
+    <!-- TAB 1: STUDENT PORTAL VIEW                           -->
+    <!-- ==================================================== -->
+    <main class="app-tab-section" id="section-student-portal">
+      <div class="search-hero">
+        <h1 class="search-hero-title">Student Result Portal</h1>
+        <p class="search-hero-sub">Enter University Roll Number to view academic statement and grade sheet.</p>
+        
+        <div class="search-box-wrap">
+          <input type="text" id="student-search-input" class="search-input" placeholder="e.g. 26MCI10158" value="26MCI10158" autocomplete="off">
+          <button id="student-search-btn" class="search-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span>View Result</span>
+          </button>
+        </div>
+
+        <div class="quick-chips-wrap">
+          <span class="chip-label">Quick Search:</span>
+          <button class="quick-chip" data-roll="26MCI10158">26MCI10158 (Ramana - 10.0 SGPA)</button>
+          <button class="quick-chip" data-roll="26MCI10159">26MCI10159 (Amanpreet - 9.35 SGPA)</button>
+          <button class="quick-chip" data-roll="26MCI10161">26MCI10161 (Rohan - 8.00 SGPA)</button>
+          <button class="quick-chip" data-roll="26MCI10165">26MCI10165 (Aditya - Arrear Demo)</button>
+        </div>
+      </div>
+
+      <!-- Result Card -->
+      <div id="student-result-container">
+        <!-- Injected by app.js -->
+      </div>
+    </main>
+
+    <!-- ==================================================== -->
+    <!-- TAB 2: TOP RANKERS                                   -->
+    <!-- ==================================================== -->
+    <section class="app-tab-section" id="section-podium" style="display: none;">
+      <div id="podium-content">
+        <!-- Injected by app.js -->
+      </div>
+    </section>
+
+    <!-- ==================================================== -->
+    <!-- TAB 3: FACULTY / ADMIN DASHBOARD                     -->
+    <!-- ==================================================== -->
+    <section class="app-tab-section" id="section-admin" style="display: none;">
+      <!-- White Glass Bento Overview -->
+      <div class="admin-bento-grid">
+        <div class="glass-panel bento-card">
+          <div class="bento-card-top">
+            <span class="stat-tile-label">Total Evaluated</span>
+          </div>
+          <div>
+            <div class="bento-num" id="bento-total-students">--</div>
+            <div class="bento-sub">Registered Students</div>
+          </div>
+        </div>
+
+        <div class="glass-panel bento-card">
+          <div class="bento-card-top">
+            <span class="stat-tile-label">Pass Percentage</span>
+          </div>
+          <div>
+            <div class="bento-num" id="bento-pass-rate" style="color: var(--success-color);">--%</div>
+            <div class="bento-sub">Overall Clearance Rate</div>
+          </div>
+        </div>
+
+        <div class="glass-panel bento-card">
+          <div class="bento-card-top">
+            <span class="stat-tile-label">Class Average SGPA</span>
+          </div>
+          <div>
+            <div class="bento-num" id="bento-avg-sgpa" style="color: var(--primary-color);">--</div>
+            <div class="bento-sub">Out of 10.00 Scale</div>
+          </div>
+        </div>
+
+        <div class="glass-panel bento-card">
+          <div class="bento-card-top">
+            <span class="stat-tile-label">Distinctions (&ge; 8.5)</span>
+          </div>
+          <div>
+            <div class="bento-num" id="bento-distinction-count">--</div>
+            <div class="bento-sub">High Achievers</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grade Distribution -->
+      <div class="glass-panel" style="margin-bottom: 1.75rem;">
+        <div class="table-panel-title">
+          <span>Class Grade Distribution</span>
+          <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-dim);">UGC 10-Point Scale</span>
+        </div>
+        <div id="grade-distribution-chart"></div>
+      </div>
+
+      <!-- Admin Actions Toolbar -->
+      <div class="glass-panel" style="margin-bottom: 1.75rem;">
+        <div class="admin-toolbar">
+          <div class="filter-group">
+            <input type="text" id="admin-search-filter" class="select-filter" placeholder="Search Roll, Name..." style="width: 200px;">
+            <select id="admin-branch-filter" class="select-filter">
+              <option value="ALL">All Departments</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="AI & Data Science">AI & Data Science</option>
+            </select>
+            <select id="admin-standing-filter" class="select-filter">
+              <option value="ALL">All Standings</option>
+              <option value="DISTINCTION">Distinction</option>
+              <option value="FIRST CLASS">First Class</option>
+              <option value="SECOND CLASS">Second Class</option>
+              <option value="REAPPEAR">Arrears / Reappear</option>
+            </select>
+          </div>
+
+          <div style="display: flex; gap: 0.6rem;">
+            <button class="btn-primary" onclick="App.openAddStudentModal()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Student
+            </button>
+            <button class="btn-secondary" onclick="App.openBulkUploadModal()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Batch CSV
+            </button>
+            <a href="/api/export-csv" target="_blank" class="btn-secondary" style="text-decoration: none;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV
+            </a>
+          </div>
+        </div>
+
+        <!-- Student Roster Table -->
+        <div style="overflow-x: auto;">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Roll No</th>
+                <th>Candidate Name</th>
+                <th>Branch</th>
+                <th style="text-align: center;">SGPA</th>
+                <th style="text-align: center;">Percentage</th>
+                <th style="text-align: center;">Standing</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-roster-tbody">
+              <!-- Injected by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Audit Log Stream -->
+      <div class="glass-panel">
+        <div class="table-panel-title">
+          <span>System Audit Log</span>
+          <span class="live-badge"><span class="live-dot"></span> Live Sync Stream</span>
+        </div>
+        <div id="admin-audit-logs">
+          <!-- Injected by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================== -->
+    <!-- TAB 4: CERTIFICATE VERIFICATION                      -->
+    <!-- ==================================================== -->
+    <section class="app-tab-section" id="section-verify-portal" style="display: none;">
+      <div class="verify-portal-container">
+        <h2 style="font-size: 1.8rem; font-weight: 800; color: #0f172a; margin-bottom: 0.4rem;">Marksheet Verification</h2>
+        <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 1.75rem;">
+          Verify digital transcript authenticity using the university ledger verification token.
+        </p>
+
+        <div class="glass-panel" style="text-align: left;">
+          <div style="margin-bottom: 1rem;">
+            <label class="input-label">University Roll Number</label>
+            <input type="text" id="verify-roll-input" class="text-input" placeholder="e.g. 26MCI10158" uppercase>
+          </div>
+
+          <div style="margin-bottom: 1.25rem;">
+            <label class="input-label">Verification Token / Hash</label>
+            <input type="text" id="verify-token-input" class="text-input" placeholder="e.g. 84B312E99AC4">
+          </div>
+
+          <button class="btn-primary" style="width: 100%;" onclick="App.verifyCertificate()">
+            Verify Authenticity
+          </button>
+        </div>
+
+        <div id="verify-output-box"></div>
+      </div>
+    </section>
+
+  </div><!-- /.app-wrapper -->
+
+  <!-- ==================================================== -->
+  <!-- MODALS                                               -->
+  <!-- ==================================================== -->
+
+  <!-- Marksheet Modal -->
+  <div class="modal-overlay" id="modal-marksheet">
+    <div class="modal-content" style="max-width: 860px;">
+      <button class="modal-close-btn" onclick="App.closeAllModals()">✕</button>
+      
+      <div class="no-print" style="display: flex; justify-content: flex-end; margin-bottom: 1.25rem;">
+        <button class="btn-primary" id="marksheet-print-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print / Save PDF
+        </button>
+      </div>
+
+      <div id="marksheet-render-target"></div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Student Modal -->
+  <div class="modal-overlay" id="modal-student-form">
+    <div class="modal-content">
+      <button class="modal-close-btn" onclick="App.closeAllModals()">✕</button>
+      <h2 id="student-modal-title" style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 0.35rem;">Student Details</h2>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">Enter candidate details and course-wise marks.</p>
+
+      <form id="student-record-form" onsubmit="App.handleSaveStudentForm(event)">
+        <div class="form-grid">
+          <div>
+            <label class="input-label">Roll Number</label>
+            <input type="text" id="form-roll-no" class="text-input" placeholder="e.g. 26MCI10166" required uppercase>
+          </div>
+          <div>
+            <label class="input-label">Candidate Name</label>
+            <input type="text" id="form-name" class="text-input" placeholder="Full Name" required>
+          </div>
+          <div>
+            <label class="input-label">University Email</label>
+            <input type="email" id="form-email" class="text-input" placeholder="student@college.edu" required>
+          </div>
+          <div>
+            <label class="input-label">Department / Branch</label>
+            <select id="form-branch" class="text-input">
+              <option value="Computer Science">Computer Science</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="AI & Data Science">AI & Data Science</option>
+              <option value="Electronics & Comm">Electronics & Comm</option>
+            </select>
+          </div>
+          <div class="form-group-full">
+            <label class="input-label">Semester</label>
+            <input type="number" id="form-semester" class="text-input" value="6" min="1" max="8" required>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <h3 style="font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 0.75rem;">Subject Marks Evaluation</h3>
+          <div id="subject-marks-inputs"></div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.65rem; margin-top: 1.75rem;">
+          <button type="button" class="btn-secondary" onclick="App.closeAllModals()">Cancel</button>
+          <button type="submit" class="btn-primary">Save Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CSV Upload Modal -->
+  <div class="modal-overlay" id="modal-bulk-upload">
+    <div class="modal-content" style="max-width: 620px;">
+      <button class="modal-close-btn" onclick="App.closeAllModals()">✕</button>
+      <h2 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 0.35rem;">Batch CSV Upload</h2>
+      <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 1.25rem;">
+        Import multiple records at once using comma-separated values.
+      </p>
+
+      <div style="margin-bottom: 1rem;">
+        <input type="file" id="csv-file-picker" accept=".csv,text/csv" onchange="App.handleCsvFileSelect(event)" style="font-size: 0.85rem;">
+        <a href="/sample-data/results_template.csv" download class="quick-chip" style="display: inline-block; margin-left: 0.5rem; text-decoration: none;">Download Template</a>
+      </div>
+
+      <textarea id="csv-upload-textarea" class="text-input" rows="7" placeholder="Paste CSV text here..." style="font-family: var(--font-mono); font-size: 0.82rem;"></textarea>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.65rem; margin-top: 1.25rem;">
+        <button type="button" class="btn-secondary" onclick="App.closeAllModals()">Cancel</button>
+        <button type="button" class="btn-primary" onclick="App.handleBulkCsvUpload()">Import Records</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Command Palette Modal -->
+  <div class="modal-overlay" id="modal-cmd-palette">
+    <div class="modal-content cmd-palette-modal">
+      <input type="text" id="cmd-palette-search" class="cmd-search-input" placeholder="Type name or roll number..." autocomplete="off">
+      <div class="cmd-results-list" id="cmd-palette-results"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/canvas-bg.js"></script>
+  <script src="js/tilt.js"></script>
+  <script src="js/confetti.js"></script>
+  <script src="js/qr.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

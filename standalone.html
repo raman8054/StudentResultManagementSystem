@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chandigarh University | Standalone Result System</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/print.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+</head>
+<body>
+
+  <div class="app-wrapper">
+    <header class="navbar">
+      <div class="nav-brand" onclick="StandaloneApp.switchTab('student-portal')">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L1 7l11 5 9-4.09V17h2V7L12 2zm0 8.35L4.47 7 12 3.58 19.53 7 12 10.35zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+          </svg>
+        </div>
+        <div>
+          <span class="brand-title">Chandigarh University</span>
+          <span class="brand-badge">RESULT PORTAL</span>
+        </div>
+      </div>
+
+      <nav class="nav-tabs">
+        <button class="nav-tab-btn active" data-tab="student-portal">Student Portal</button>
+        <button class="nav-tab-btn" data-tab="podium">Top Rankers</button>
+        <button class="nav-tab-btn" data-tab="admin">Faculty Portal</button>
+      </nav>
+
+      <div class="nav-actions">
+        <div class="live-badge" style="background: rgba(37, 99, 235, 0.08); color: #2563eb; border-color: rgba(37, 99, 235, 0.2);">
+          <span>OFFLINE READY</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-tab-section" id="section-student-portal">
+      <div class="search-hero">
+        <h1 class="search-hero-title">Student Result Portal</h1>
+        <p class="search-hero-sub">Enter University Roll Number to view academic statement and grade sheet.</p>
+        
+        <div class="search-box-wrap">
+          <input type="text" id="student-search-input" class="search-input" placeholder="e.g. 26MCI10158" value="26MCI10158" autocomplete="off">
+          <button id="student-search-btn" class="search-btn">
+            <span>View Result</span>
+          </button>
+        </div>
+
+        <div class="quick-chips-wrap">
+          <span class="chip-label">Quick Search:</span>
+          <button class="quick-chip" onclick="StandaloneApp.lookupStudent('26MCI10158')">26MCI10158 (Ramana - 10.0 SGPA)</button>
+          <button class="quick-chip" onclick="StandaloneApp.lookupStudent('26MCI10159')">26MCI10159 (Amanpreet - 9.35 SGPA)</button>
+          <button class="quick-chip" onclick="StandaloneApp.lookupStudent('26MCI10161')">26MCI10161 (Rohan - 8.00 SGPA)</button>
+          <button class="quick-chip" onclick="StandaloneApp.lookupStudent('26MCI10165')">26MCI10165 (Aditya - Arrear Demo)</button>
+        </div>
+      </div>
+
+      <div id="student-result-container"></div>
+    </main>
+
+    <section class="app-tab-section" id="section-podium" style="display: none;">
+      <div id="podium-content"></div>
+    </section>
+
+    <section class="app-tab-section" id="section-admin" style="display: none;">
+      <div class="admin-bento-grid">
+        <div class="glass-panel bento-card">
+          <span class="stat-tile-label">Total Evaluated</span>
+          <div class="bento-num" id="bento-total-students">10</div>
+          <div class="bento-sub">Registered Students</div>
+        </div>
+        <div class="glass-panel bento-card">
+          <span class="stat-tile-label">Pass Percentage</span>
+          <div class="bento-num" id="bento-pass-rate" style="color: var(--success-color);">90%</div>
+          <div class="bento-sub">Clearance Rate</div>
+        </div>
+        <div class="glass-panel bento-card">
+          <span class="stat-tile-label">Class Average SGPA</span>
+          <div class="bento-num" id="bento-avg-sgpa" style="color: var(--primary-color);">8.11</div>
+          <div class="bento-sub">10.00 Scale</div>
+        </div>
+        <div class="glass-panel bento-card">
+          <span class="stat-tile-label">Distinctions</span>
+          <div class="bento-num" id="bento-distinction-count">4</div>
+          <div class="bento-sub">SGPA &ge; 8.5</div>
+        </div>
+      </div>
+
+      <div class="glass-panel" style="margin-bottom: 1.75rem;">
+        <div class="table-panel-title">Class Grade Distribution</div>
+        <div id="grade-distribution-chart"></div>
+      </div>
+
+      <div class="glass-panel">
+        <div class="table-panel-title">Student Class Roster</div>
+        <div style="overflow-x: auto;">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Roll No</th>
+                <th>Candidate Name</th>
+                <th>Branch</th>
+                <th style="text-align: center;">SGPA</th>
+                <th style="text-align: center;">Percentage</th>
+                <th style="text-align: center;">Standing</th>
+              </tr>
+            </thead>
+            <tbody id="admin-roster-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Marksheet Modal -->
+  <div class="modal-overlay" id="modal-marksheet">
+    <div class="modal-content" style="max-width: 860px;">
+      <button class="modal-close-btn" onclick="StandaloneApp.closeModal()">✕</button>
+      <div class="no-print" style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+        <button class="btn-primary" onclick="window.print()">Print / Save PDF</button>
+      </div>
+      <div id="marksheet-render-target"></div>
+    </div>
+  </div>
+
+  <script src="js/qr.js"></script>
+  <script src="js/charts.js"></script>
+  <script>
+    const SAMPLE_STUDENTS = [
+      { roll_no: '26MCI10158', name: 'Ramana Sharma', email: '26mci10158@cuchd.in', branch: 'Computer Applications', semester: 6, section: 'A', sgpa: 10.0, total_marks: 578, max_marks: 600, percentage: 96.3, standing: 'DISTINCTION', arrears: 0, rank: 1, marks: [
+        { subject_code: 'CA601', subject_name: 'Advanced Internet Programming', credits: 4, internal_marks: 29, external_marks: 68, total_marks: 97, grade: 'O', grade_point: 10, status: 'PASS' },
+        { subject_code: 'CA602', subject_name: 'Cloud Computing & Microservices', credits: 4, internal_marks: 30, external_marks: 67, total_marks: 97, grade: 'O', grade_point: 10, status: 'PASS' },
+        { subject_code: 'CA603', subject_name: 'Distributed Database Systems', credits: 3, internal_marks: 29, external_marks: 68, total_marks: 97, grade: 'O', grade_point: 10, status: 'PASS' },
+        { subject_code: 'CA604', subject_name: 'Design & Analysis of Algorithms', credits: 4, internal_marks: 30, external_marks: 69, total_marks: 99, grade: 'O', grade_point: 10, status: 'PASS' },
+        { subject_code: 'CA605', subject_name: 'Machine Learning & Analytics', credits: 3, internal_marks: 29, external_marks: 67, total_marks: 96, grade: 'O', grade_point: 10, status: 'PASS' },
+        { subject_code: 'CA606', subject_name: 'Internet Programming Lab', credits: 2, internal_marks: 30, external_marks: 70, total_marks: 100, grade: 'O', grade_point: 10, status: 'PASS' }
+      ]},
+      { roll_no: '26MCI10159', name: 'Amanpreet Singh', email: '26mci10159@cuchd.in', branch: 'Computer Applications', semester: 6, section: 'A', sgpa: 9.35, total_marks: 546, max_marks: 600, percentage: 91.0, standing: 'DISTINCTION', arrears: 0, rank: 2, marks: [
+        { subject_code: 'CA601', subject_name: 'Advanced Internet Programming', credits: 4, internal_marks: 28, external_marks: 64, total_marks: 92, grade: 'O', grade_point: 10, status: 'PASS' },
+        { subject_code: 'CA602', subject_name: 'Cloud Computing & Microservices', credits: 4, internal_marks: 27, external_marks: 63, total_marks: 90, grade: 'O', grade_point: 10, status: 'PASS' },
+        { subject_code: 'CA603', subject_name: 'Distributed Database Systems', credits: 3, internal_marks: 28, external_marks: 64, total_marks: 92, grade: 'O', grade_point: 10, status: 'PASS' },
+        { subject_code: 'CA604', subject_name: 'Design & Analysis of Algorithms', credits: 4, internal_marks: 28, external_marks: 66, total_marks: 94, grade: 'O', grade_point: 10, status: 'PASS' },
+        { subject_code: 'CA605', subject_name: 'Machine Learning & Analytics', credits: 3, internal_marks: 27, external_marks: 62, total_marks: 89, grade: 'A+', grade_point: 9, status: 'PASS' },
+        { subject_code: 'CA606', subject_name: 'Internet Programming Lab', credits: 2, internal_marks: 28, external_marks: 68, total_marks: 96, grade: 'O', grade_point: 10, status: 'PASS' }
+      ]},
+      { roll_no: '26MCI10161', name: 'Rohan Verma', email: '26mci10161@cuchd.in', branch: 'Computer Science', semester: 6, section: 'B', sgpa: 8.0, total_marks: 485, max_marks: 600, percentage: 80.8, standing: 'FIRST CLASS', arrears: 0, rank: 3, marks: [
+        { subject_code: 'CA601', subject_name: 'Advanced Internet Programming', credits: 4, internal_marks: 25, external_marks: 56, total_marks: 81, grade: 'A+', grade_point: 9, status: 'PASS' },
+        { subject_code: 'CA602', subject_name: 'Cloud Computing & Microservices', credits: 4, internal_marks: 24, external_marks: 52, total_marks: 76, grade: 'A', grade_point: 8, status: 'PASS' },
+        { subject_code: 'CA603', subject_name: 'Distributed Database Systems', credits: 3, internal_marks: 26, external_marks: 58, total_marks: 84, grade: 'A+', grade_point: 9, status: 'PASS' },
+        { subject_code: 'CA604', subject_name: 'Design & Analysis of Algorithms', credits: 4, internal_marks: 25, external_marks: 54, total_marks: 79, grade: 'A', grade_point: 8, status: 'PASS' },
+        { subject_code: 'CA605', subject_name: 'Machine Learning & Analytics', credits: 3, internal_marks: 24, external_marks: 53, total_marks: 77, grade: 'A', grade_point: 8, status: 'PASS' },
+        { subject_code: 'CA606', subject_name: 'Internet Programming Lab', credits: 2, internal_marks: 27, external_marks: 62, total_marks: 89, grade: 'A+', grade_point: 9, status: 'PASS' }
+      ]},
+      { roll_no: '26MCI10165', name: 'Aditya Gupta', email: '26mci10165@cuchd.in', branch: 'Computer Applications', semester: 6, section: 'B', sgpa: 5.25, total_marks: 310, max_marks: 600, percentage: 51.7, standing: 'REAPPEAR', arrears: 1, rank: 4, marks: [
+        { subject_code: 'CA601', subject_name: 'Advanced Internet Programming', credits: 4, internal_marks: 18, external_marks: 32, total_marks: 50, grade: 'B', grade_point: 6, status: 'PASS' },
+        { subject_code: 'CA602', subject_name: 'Cloud Computing & Microservices', credits: 4, internal_marks: 14, external_marks: 20, total_marks: 34, grade: 'F', grade_point: 0, status: 'FAIL' },
+        { subject_code: 'CA603', subject_name: 'Distributed Database Systems', credits: 3, internal_marks: 19, external_marks: 34, total_marks: 53, grade: 'B', grade_point: 6, status: 'PASS' },
+        { subject_code: 'CA604', subject_name: 'Design & Analysis of Algorithms', credits: 4, internal_marks: 17, external_marks: 30, total_marks: 47, grade: 'C', grade_point: 5, status: 'PASS' },
+        { subject_code: 'CA605', subject_name: 'Machine Learning & Analytics', credits: 3, internal_marks: 16, external_marks: 28, total_marks: 44, grade: 'C', grade_point: 5, status: 'PASS' },
+        { subject_code: 'CA606', subject_name: 'Internet Programming Lab', credits: 2, internal_marks: 20, external_marks: 45, total_marks: 65, grade: 'B+', grade_point: 7, status: 'PASS' }
+      ]}
+    ];
+
+    const StandaloneApp = {
+      currentStudent: null,
+      init() {
+        document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+          btn.addEventListener('click', () => this.switchTab(btn.dataset.tab));
+        });
+        document.getElementById('student-search-btn')?.addEventListener('click', () => {
+          const roll = document.getElementById('student-search-input')?.value.trim();
+          if (roll) this.lookupStudent(roll);
+        });
+        this.lookupStudent('26MCI10158');
+      },
+      switchTab(tabId) {
+        document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+        document.querySelectorAll('.app-tab-section').forEach(s => s.style.display = (s.id === `section-${tabId}`) ? 'block' : 'none');
+        if (tabId === 'podium') this.renderPodium();
+        if (tabId === 'admin') this.renderAdmin();
+      },
+      lookupStudent(rollNo) {
+        const student = SAMPLE_STUDENTS.find(s => s.roll_no.toUpperCase() === rollNo.trim().toUpperCase()) || SAMPLE_STUDENTS[0];
+        this.currentStudent = student;
+        const container = document.getElementById('student-result-container');
+        if (!container) return;
+
+        let rowsHtml = '';
+        student.marks.forEach(m => {
+          rowsHtml += `
+            <tr>
+              <td><span class="code-pill">${m.subject_code}</span></td>
+              <td>${m.subject_name}</td>
+              <td style="text-align: center;">${m.credits}</td>
+              <td style="text-align: center;">${m.internal_marks} / 30</td>
+              <td style="text-align: center;">${m.external_marks} / 70</td>
+              <td style="text-align: center; font-weight: 700;">${m.total_marks}</td>
+              <td style="text-align: center;"><span class="grade-badge">${m.grade}</span></td>
+              <td style="text-align: center; font-weight: 700;">${m.grade_point}</td>
+              <td style="text-align: center; font-weight: 700; color: ${m.status === 'PASS' ? 'var(--success-color)' : 'var(--danger-color)'};">${m.status}</td>
+            </tr>
+          `;
+        });
+
+        const initials = student.name.split(' ').map(n => n[0]).join('').substring(0, 2);
+        const standingClass = student.standing === 'REAPPEAR' ? 'standing-reappear' : (student.standing === 'DISTINCTION' ? 'standing-distinction' : 'standing-first-class');
+
+        container.innerHTML = `
+          <div class="result-display-grid">
+            <div class="glass-panel student-profile-card">
+              <div class="hologram-seal">AUTHENTICATED</div>
+              <div class="avatar-wrapper">
+                <div class="student-avatar">${initials}</div>
+                <div class="rank-badge-pill">Rank #${student.rank}</div>
+              </div>
+              <h2 class="student-name">${student.name}</h2>
+              <div class="student-roll">${student.roll_no}</div>
+              <div class="standing-badge ${standingClass}">${student.standing}</div>
+              <div class="student-meta-list">
+                <div class="meta-row"><span class="meta-key">Department:</span><span class="meta-val">${student.branch}</span></div>
+                <div class="meta-row"><span class="meta-key">Semester:</span><span class="meta-val">Semester ${student.semester}</span></div>
+                <div class="meta-row"><span class="meta-key">Backlogs:</span><span class="meta-val">${student.arrears}</span></div>
+              </div>
+              <div class="card-actions">
+                <button class="btn-primary" onclick="StandaloneApp.openMarksheet()">View Official Marksheet</button>
+              </div>
+            </div>
+            <div class="result-details-column">
+              <div class="glass-panel score-overview-banner">
+                <div id="student-gpa-gauge"></div>
+                <div class="stat-tile">
+                  <span class="stat-tile-label">Aggregate Marks</span>
+                  <span class="stat-tile-val">${student.total_marks} / ${student.max_marks}</span>
+                </div>
+                <div class="stat-tile">
+                  <span class="stat-tile-label">Percentage</span>
+                  <span class="stat-tile-val">${student.percentage}%</span>
+                </div>
+              </div>
+              <div class="glass-panel">
+                <div class="table-panel-title">Course Performance Breakdown</div>
+                <table class="modern-table">
+                  <thead>
+                    <tr><th>Code</th><th>Course</th><th style="text-align: center;">Credits</th><th style="text-align: center;">Int</th><th style="text-align: center;">Ext</th><th style="text-align: center;">Total</th><th style="text-align: center;">Grade</th><th style="text-align: center;">Points</th><th style="text-align: center;">Status</th></tr>
+                  </thead>
+                  <tbody>${rowsHtml}</tbody>
+                </table>
+              </div>
+              <div class="glass-panel">
+                <div class="table-panel-title">Radar Chart Comparison</div>
+                <div id="student-radar-chart"></div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        if (window.VisualCharts) {
+          window.VisualCharts.renderGpaGauge('student-gpa-gauge', student.sgpa);
+          const avgs = { 'CA601': 82, 'CA602': 78, 'CA603': 80, 'CA604': 85, 'CA605': 79, 'CA606': 90 };
+          window.VisualCharts.renderRadarChart('student-radar-chart', student.marks, avgs);
+        }
+      },
+      openMarksheet() {
+        if (!this.currentStudent) return;
+        const modal = document.getElementById('modal-marksheet');
+        const container = document.getElementById('marksheet-render-target');
+        const s = this.currentStudent;
+        const qrSvg = window.QRCodeGenerator ? window.QRCodeGenerator.createSVG('https://cuchd.in/verify?roll=' + s.roll_no, 90) : '';
+
+        let rows = '';
+        s.marks.forEach(m => {
+          rows += `<tr><td>${m.subject_code}</td><td class="subject-name">${m.subject_name}</td><td>${m.credits}</td><td>${m.internal_marks}</td><td>${m.external_marks}</td><td>${m.total_marks}</td><td>${m.grade}</td><td>${m.grade_point}</td><td>${m.credits * m.grade_point}</td><td>${m.status}</td></tr>`;
+        });
+
+        container.innerHTML = `
+          <div class="printable-transcript">
+            <div class="transcript-header">
+              <div class="transcript-univ-title">CHANDIGARH UNIVERSITY</div>
+              <div class="transcript-univ-sub">University Institute of Computing (UIC) • Department of Computer Applications</div>
+              <div class="transcript-doc-name">Official Statement of Marks & Grade Sheet</div>
+            </div>
+            <div class="transcript-meta-grid">
+              <table class="transcript-meta-table">
+                <tr><td class="label">Candidate Name:</td><td><strong>${s.name}</strong></td></tr>
+                <tr><td class="label">Roll Number (UID):</td><td><strong>${s.roll_no}</strong></td></tr>
+                <tr><td class="label">Program:</td><td>Master of Computer Applications (${s.branch})</td></tr>
+              </table>
+              <div class="transcript-qr-box">${qrSvg}<div class="transcript-qr-caption">CU Security Token</div></div>
+            </div>
+            <table class="transcript-marks-table">
+              <thead><tr><th>Code</th><th>Course</th><th>Credits</th><th>Int</th><th>Ext</th><th>Total</th><th>Grade</th><th>Points</th><th>Credit Points</th><th>Status</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+            <div class="transcript-summary-box">
+              <div><strong>Aggregate:</strong> ${s.total_marks} / ${s.max_marks} (${s.percentage}%)</div>
+              <div><strong>SGPA:</strong> <span style="font-size: 12pt; font-weight: bold;">${s.sgpa} / 10.00</span></div>
+              <div><strong>Status:</strong> ${s.standing}</div>
+            </div>
+            <div class="transcript-signatures">
+              <div class="signature-line">Class Coordinator</div>
+              <div class="signature-line">Director, UIC</div>
+              <div class="signature-line">Controller of Examinations, CU</div>
+            </div>
+          </div>
+        `;
+        modal.classList.add('active');
+      },
+      closeModal() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+      },
+      renderPodium() {
+        const top = SAMPLE_STUDENTS.slice(0, 3);
+        const container = document.getElementById('podium-content');
+        container.innerHTML = `
+          <div class="podium-section">
+            <div class="podium-header"><h2 class="podium-title">Top Academic Rankers</h2><p style="color: var(--text-muted);">Highest scorers in Semester 6 evaluation</p></div>
+            <div class="podium-container">
+              <div class="podium-column">
+                <div class="podium-avatar-card" onclick="StandaloneApp.lookupStudent('${top[1].roll_no}')">
+                  <div class="student-avatar" style="width: 76px; height: 76px; font-size: 1.5rem; background: #e2e8f0;">#2</div>
+                  <h3 style="margin-top: 0.5rem; font-size: 1.05rem; font-weight: 700;">${top[1].name}</h3>
+                  <div style="font-weight: 800; color: #0f172a;">${top[1].sgpa} SGPA</div>
+                </div>
+                <div class="podium-pedestal rank-2-pedestal"><span class="pedestal-rank-num">2</span><span>SECOND RANK</span></div>
+              </div>
+              <div class="podium-column">
+                <div class="podium-avatar-card" onclick="StandaloneApp.lookupStudent('${top[0].roll_no}')">
+                  <div class="student-avatar" style="width: 90px; height: 90px; font-size: 1.8rem; background: #fef3c7; border-color: #fde68a;">#1</div>
+                  <h3 style="margin-top: 0.5rem; font-size: 1.15rem; font-weight: 800;">${top[0].name}</h3>
+                  <div style="font-weight: 800; color: #0f172a;">${top[0].sgpa} SGPA</div>
+                </div>
+                <div class="podium-pedestal rank-1-pedestal"><span class="pedestal-rank-num" style="color: #d97706;">1</span><span>FIRST RANK</span></div>
+              </div>
+              <div class="podium-column">
+                <div class="podium-avatar-card" onclick="StandaloneApp.lookupStudent('${top[2].roll_no}')">
+                  <div class="student-avatar" style="width: 72px; height: 72px; font-size: 1.4rem; background: #ffedd5;">#3</div>
+                  <h3 style="margin-top: 0.5rem; font-size: 1rem; font-weight: 700;">${top[2].name}</h3>
+                  <div style="font-weight: 800; color: #0f172a;">${top[2].sgpa} SGPA</div>
+                </div>
+                <div class="podium-pedestal rank-3-pedestal"><span class="pedestal-rank-num">3</span><span>THIRD RANK</span></div>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+      renderAdmin() {
+        const tbody = document.getElementById('admin-roster-tbody');
+        let html = '';
+        SAMPLE_STUDENTS.forEach(s => {
+          html += `
+            <tr>
+              <td><strong>#${s.rank}</strong></td>
+              <td><span class="code-pill">${s.roll_no}</span></td>
+              <td>${s.name}</td>
+              <td>${s.branch}</td>
+              <td style="text-align: center; font-weight: 700;">${s.sgpa}</td>
+              <td style="text-align: center;">${s.percentage}%</td>
+              <td style="text-align: center;"><span class="standing-badge standing-${s.standing.toLowerCase().replace(/\s+/g, '-')}" style="padding: 2px 8px; font-size: 0.72rem;">${s.standing}</span></td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+        if (window.VisualCharts) {
+          window.VisualCharts.renderGradeDistribution('grade-distribution-chart', { 'O': 14, 'A+': 10, 'A': 3, 'B+': 1, 'B': 1, 'C': 2, 'F': 1 });
+        }
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => StandaloneApp.init());
+  </script>
+</body>
+</html>
